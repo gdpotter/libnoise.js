@@ -1,159 +1,151 @@
-var NoiseMapBuilderPlane = function(sourceModule, width, height, seamless) {
+define(['../interpolation', '../noisemap', '../model/plane'], function(Interpoliation, NoiseMap, Plane) {
 
-	this.sourceModule   = sourceModule  || null;
-	this.width          = width         || 256;
-	this.height         = height        || 256;
-	this.seamless       = seamless      || false;
+    var NoiseMapBuilderPlane = function(sourceModule, width, height, seamless) {
 
-	this.lowerXBound    = 0.0;
-	this.lowerYBound    = 0.0;
-	this.upperXBound    = 1.0;
-	this.upperYBound    = 1.0;
+        this.sourceModule   = sourceModule  || null;
+        this.width          = width         || 256;
+        this.height         = height        || 256;
+        this.seamless       = seamless      || false;
 
-	this.noiseMap       = new NoiseMap(this.width, this.height);
+        this.lowerXBound    = 0.0;
+        this.lowerYBound    = 0.0;
+        this.upperXBound    = 1.0;
+        this.upperYBound    = 1.0;
 
-};
+        this.noiseMap       = new NoiseMap(this.width, this.height);
 
-NoiseMapBuilderPlane.prototype = {
+    };
 
-	get lowerXBound() {
+    NoiseMapBuilderPlane.prototype = {
 
-		return this._lowerXBound;
+        get lowerXBound() {
 
-	},
+            return this._lowerXBound;
 
-	set lowerXBound(v) {
+        },
 
-		this._lowerXBound = v;
+        set lowerXBound(v) {
 
-	},
+            this._lowerXBound = v;
 
-	get lowerYBound() {
+        },
 
-		return this._lowerYBound;
+        get lowerYBound() {
 
-	},
+            return this._lowerYBound;
 
-	set lowerYBound(v) {
+        },
 
-		this._lowerYBound = v;
+        set lowerYBound(v) {
 
-	},
+            this._lowerYBound = v;
 
-	get upperXBound() {
+        },
 
-		return this._upperXBound;
+        get upperXBound() {
 
-	},
+            return this._upperXBound;
 
-	set upperXBound(v) {
+        },
 
-		this._upperXBound = v;
+        set upperXBound(v) {
 
-	},
+            this._upperXBound = v;
 
-	get upperYBound() {
+        },
 
-		return this._upperYBound;
+        get upperYBound() {
 
-	},
+            return this._upperYBound;
 
-	set upperYBound(v) {
+        },
 
-		this._upperYBound = v;
+        set upperYBound(v) {
 
-	},
+            this._upperYBound = v;
 
-	build: function() {
+        },
 
-		var xExtent = this.upperXBound - this.lowerXBound;
-		var yExtent = this.upperYBound - this.lowerYBound;
+        build: function() {
 
-		if (xExtent < 0 || yExtent < 0) {
+            var xExtent = this.upperXBound - this.lowerXBound;
+            var yExtent = this.upperYBound - this.lowerYBound;
 
-			throw new Error('Invalid bounds!');
+            if (xExtent < 0 || yExtent < 0) {
 
-		}
+                throw new Error('Invalid bounds!');
 
-		if (!this.sourceModule) {
+            }
 
-			throw new Error('Invalid or missing module!');
+            if (!this.sourceModule) {
 
-		}
+                throw new Error('Invalid or missing module!');
 
-		// Create the plane model.
-		var plane   = new Plane(this.sourceModule);
-		var xDelta  = xExtent / this.width;
-		var yDelta  = yExtent / this.height;
-		var curX    = this.lowerXBound;
-		var curY    = this.lowerYBound;
-		var value, xBlend;
+            }
 
-		// Fill every point in the noise map with the output values from the model.
-		for (var y = 0; y < this.height; y++) {
+            // Create the plane model.
+            var plane   = new Plane(this.sourceModule);
+            var xDelta  = xExtent / this.width;
+            var yDelta  = yExtent / this.height;
+            var curX    = this.lowerXBound;
+            var curY    = this.lowerYBound;
+            var value, xBlend;
 
-			curX = this.lowerXBound;
+            // Fill every point in the noise map with the output values from the model.
+            for (var y = 0; y < this.height; y++) {
 
-			for (var x = 0; x < this.width; x++) {
+                curX = this.lowerXBound;
 
-				if(!this.seamless) {
+                for (var x = 0; x < this.width; x++) {
 
-					value = plane.getValue(curX, curY);
+                    if(!this.seamless) {
 
-				} else {
+                        value = plane.getValue(curX, curY);
 
-					xBlend = 1.0 - ((curX - this.lowerXBound) / xExtent);
+                    } else {
 
-					value = Interpolation.linear(
-						Interpolation.linear(
-							plane.getValue(curX, curY),
-							plane.getValue(curX + xExtent, curY),
-							xBlend
-						),
-						Interpolation.linear(
-							plane.getValue(curX, curY + yExtent),
-							plane.getValue(curX + xExtent, curY + yExtent),
-							xBlend
-						),
-						1.0 - ((curY - this.lowerYBound) / yExtent)
-					);
-				}
+                        xBlend = 1.0 - ((curX - this.lowerXBound) / xExtent);
 
-				this.noiseMap.setValue(x, y, value);
+                        value = Interpolation.linear(
+                            Interpolation.linear(
+                                plane.getValue(curX, curY),
+                                plane.getValue(curX + xExtent, curY),
+                                xBlend
+                            ),
+                            Interpolation.linear(
+                                plane.getValue(curX, curY + yExtent),
+                                plane.getValue(curX + xExtent, curY + yExtent),
+                                xBlend
+                            ),
+                            1.0 - ((curY - this.lowerYBound) / yExtent)
+                        );
+                    }
 
-				curX += xDelta;
+                    this.noiseMap.setValue(x, y, value);
 
-			}
+                    curX += xDelta;
 
-			curY += yDelta;
+                }
 
-		}
+                curY += yDelta;
 
-		return this.noiseMap;
+            }
 
-	},
+            return this.noiseMap;
 
-	setBounds: function(lowerXBound, lowerYBound, upperXBound, upperYBound) {
+        },
 
-		this.upperXBound    = upperXBound;
-		this.upperYBound    = upperYBound;
-		this.lowerXBound    = lowerXBound;
-		this.lowerYBound    = lowerYBound;
+        setBounds: function(lowerXBound, lowerYBound, upperXBound, upperYBound) {
 
-	}
+            this.upperXBound    = upperXBound;
+            this.upperYBound    = upperYBound;
+            this.lowerXBound    = lowerXBound;
+            this.lowerYBound    = lowerYBound;
 
-};
+        }
 
-if (module) {
+    };
 
-	var Interpoliation  = require('../interpolation');
-	var NoiseMap        = require('../noisemap');
-	var Plane           = require('../model/plane');
+    return NoiseMapBuilderPlane;
 
-	module.exports      = NoiseMapBuilderPlane;
-
-} else {
-
-	require(['interpolation', 'noisemap', 'model/plane']);
-
-}
+});

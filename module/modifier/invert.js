@@ -1,23 +1,23 @@
-var Invert = function(sourceModule) {
+define(function() {
 
-	this.sourceModule = sourceModule || null;
+    var Invert = function(sourceModule) {
 
-};
+        this.sourceModule = sourceModule || null;
 
-Invert.prototype.getValue = function(x, y, z) {
+    };
 
-	if(!this.sourceModule) {
+    Invert.prototype.getValue = function(x, y, z) {
 
-		throw new Error('Invalid or missing source module!');
+        if(!this.sourceModule) {
 
-	}
+            throw new Error('Invalid or missing source module!');
 
-	return -this.sourceModule.getValue(x, y, z);
+        }
 
-};
+        return -this.sourceModule.getValue(x, y, z);
 
-if(module) {
+    };
 
-	module.exports = Invert;
+    return Invert;
 
-}
+});

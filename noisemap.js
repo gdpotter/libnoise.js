@@ -1,89 +1,87 @@
-var NoiseMap = function(w, h) {
+define(function() {
+    var NoiseMap = function(w, h) {
 
-	this.width  = w || 1;
-	this.height = h || 1;
-	this.map    = [];
+        this.width  = w || 1;
+        this.height = h || 1;
+        this.map    = [];
 
-};
+    };
 
-NoiseMap.prototype = {
+    NoiseMap.prototype = {
 
-	get height() {
+        get height() {
 
-		return this._height;
+            return this._height;
 
-	},
+        },
 
-	set height(v) {
+        set height(v) {
 
-		if(v < 0) {
+            if(v < 0) {
 
-			throw new Error('Height must be greater than zero.');
+                throw new Error('Height must be greater than zero.');
 
-		}
+            }
 
-		this._height = v;
+            this._height = v;
 
-	},
+        },
 
-	get width() {
+        get width() {
 
-		return this._width;
+            return this._width;
 
-	},
+        },
 
-	set width(v) {
+        set width(v) {
 
-		if(v < 0) {
+            if(v < 0) {
 
-			throw new Error('Width must be greater than zero.');
+                throw new Error('Width must be greater than zero.');
 
-		}
+            }
 
-		this._width = v;
+            this._width = v;
 
-	},
+        },
 
-	addValue: function(x, y, v) {
+        addValue: function(x, y, v) {
 
-		var value = this.getValue(x, y) || 0;
+            var value = this.getValue(x, y) || 0;
 
-		this.setValue(x, y, value + v);
+            this.setValue(x, y, value + v);
 
-	},
+        },
 
-	getValue: function(x, y) {
+        getValue: function(x, y) {
 
-		return this.map[y * this.width + x];
+            return this.map[y * this.width + x];
 
-	},
+        },
 
-	setSize: function(w, h) {
+        setSize: function(w, h) {
 
-		this.width  = w;
-		this.height = h;
+            this.width  = w;
+            this.height = h;
 
-	},
+        },
 
-	setValue: function(x, y, v) {
+        setValue: function(x, y, v) {
 
-		this.map[y * this.width + x] = v;
+            this.map[y * this.width + x] = v;
 
-	},
+        },
 
-	subtractValue: function(x, y, v) {
+        subtractValue: function(x, y, v) {
 
-		var value = this.getValue(x, y) || 0;
+            var value = this.getValue(x, y) || 0;
 
-		this.setValue(x, y,  value - v);
+            this.setValue(x, y,  value - v);
 
-	}
+        }
 
-};
+    };
 
+    return NoiseMap;
 
-if(module) {
-
-	module.exports = NoiseMap;
-
-}
+});

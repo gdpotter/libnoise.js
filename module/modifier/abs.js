@@ -1,23 +1,23 @@
-var Abs = function(sourceModule) {
+define(function() {
 
-	this.sourceModule = sourceModule || null;
+    var Abs = function(sourceModule) {
 
-};
+        this.sourceModule = sourceModule || null;
 
-Abs.prototype.getValue = function(x, y, z) {
+    };
 
-	if(!this.sourceModule) {
+    Abs.prototype.getValue = function(x, y, z) {
 
-		throw new Error('Invalid or missing source module!');
+        if(!this.sourceModule) {
 
-	}
+            throw new Error('Invalid or missing source module!');
 
-	return Math.abs(this.sourceModule.getValue(x, y, z));
+        }
 
-};
+        return Math.abs(this.sourceModule.getValue(x, y, z));
 
-if(module) {
+    };
 
-	module.exports = Abs;
+    return Abs;
 
-}
+});

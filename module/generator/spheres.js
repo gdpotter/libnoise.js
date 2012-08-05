@@ -1,27 +1,27 @@
-var Spheres = function(frequency) {
+define(function() {
 
-	this.frequency = frequency || Spheres.DEFAULT_SPHERES_FREQUENCY;
-};
+    var Spheres = function(frequency) {
 
-Spheres.DEFAULT_SPHERES_FREQUENCY = 4.0;
+        this.frequency = frequency || Spheres.DEFAULT_SPHERES_FREQUENCY;
+    };
 
-Spheres.prototype.getValue = function(x, y, z) {
+    Spheres.DEFAULT_SPHERES_FREQUENCY = 4.0;
 
-	x = parseFloat(x * this.frequency);
-	y = parseFloat(y * this.frequency);
-	z = parseFloat(z * this.frequency);
+    Spheres.prototype.getValue = function(x, y, z) {
 
-	var distFromCenter          = Math.sqrt(x * x + y * y + z * z);
-	var distFromSmallerSphere   = distFromCenter - Math.floor(distFromCenter);
-	var distFromLargerSphere    = 1.0 - distFromSmallerSphere;
-	var nearestDist             = Math.min(distFromSmallerSphere, distFromLargerSphere);
+        x = parseFloat(x * this.frequency);
+        y = parseFloat(y * this.frequency);
+        z = parseFloat(z * this.frequency);
 
-	return 1.0 - (nearestDist * 4.0); // Puts it in the -1.0 to +1.0 range.
+        var distFromCenter          = Math.sqrt(x * x + y * y + z * z);
+        var distFromSmallerSphere   = distFromCenter - Math.floor(distFromCenter);
+        var distFromLargerSphere    = 1.0 - distFromSmallerSphere;
+        var nearestDist             = Math.min(distFromSmallerSphere, distFromLargerSphere);
 
-};
+        return 1.0 - (nearestDist * 4.0); // Puts it in the -1.0 to +1.0 range.
 
-if(module) {
+    };
 
-	module.exports = Spheres;
+    return Spheres;
 
-}
+});

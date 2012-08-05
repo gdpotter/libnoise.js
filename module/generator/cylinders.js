@@ -1,28 +1,28 @@
-var Cylinders = function(frequency) {
+define(function() {
 
-	this.frequency = frequency || Cylinders.DEFAULT_CYLINDERS_FREQUENCY;
+    var Cylinders = function(frequency) {
 
-};
+    	this.frequency = frequency || Cylinders.DEFAULT_CYLINDERS_FREQUENCY;
 
-Cylinders.DEFAULT_CYLINDERS_FREQUENCY = 1.0;
+    };
 
-Cylinders.prototype.getValue = function(x, y, z) {
+    Cylinders.DEFAULT_CYLINDERS_FREQUENCY = 1.0;
 
-	x = parseFloat(x * this.frequency);
-	y = parseFloat(y * this.frequency);
-	z = parseFloat(z);
+    Cylinders.prototype.getValue = function(x, y, z) {
 
-	var distFromCenter          = Math.sqrt(x * x + z * z);
-    var distFromSmallerSphere   = distFromCenter - Math.floor(distFromCenter);
-    var distFromLargerSphere    = 1.0 - distFromSmallerSphere;
-    var nearestDist             = Math.min(distFromSmallerSphere, distFromLargerSphere);
+    	x = parseFloat(x * this.frequency);
+    	y = parseFloat(y * this.frequency);
+    	z = parseFloat(z);
 
-    return 1.0 - (nearestDist * 4.0); // Puts it in the -1.0 to +1.0 range.
+    	var distFromCenter          = Math.sqrt(x * x + z * z);
+        var distFromSmallerSphere   = distFromCenter - Math.floor(distFromCenter);
+        var distFromLargerSphere    = 1.0 - distFromSmallerSphere;
+        var nearestDist             = Math.min(distFromSmallerSphere, distFromLargerSphere);
 
-};
+        return 1.0 - (nearestDist * 4.0); // Puts it in the -1.0 to +1.0 range.
 
-if(module) {
+    };
 
-	module.exports = Cylinders;
+    return Cylinders;
 
-}
+});

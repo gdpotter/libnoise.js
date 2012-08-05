@@ -1,61 +1,61 @@
-var Misc = {
+define(function () {
 
-	clampValue: function(value, lowerBound, upperBound) {
+    var Misc = {
 
-		if (value < lowerBound) {
+        clampValue: function(value, lowerBound, upperBound) {
 
-			return lowerBound;
+            if (value < lowerBound) {
 
-		} else if (value > upperBound) {
+                return lowerBound;
 
-			return upperBound;
+            } else if (value > upperBound) {
 
-		} else {
+                return upperBound;
 
-			return value;
+            } else {
 
-		}
+                return value;
 
-	},
+            }
 
-	exponentFilter: function(value, cover, sharpness) {
+        },
 
-		var c = value - (255 - cover);
+        exponentFilter: function(value, cover, sharpness) {
 
-		if(c < 0) {
+            var c = value - (255 - cover);
 
-			c = 0;
+            if(c < 0) {
 
-		}
+                c = 0;
 
-		return 255 - Math.floor(Math.pow(sharpness, c) * 255);
+            }
+
+            return 255 - Math.floor(Math.pow(sharpness, c) * 255);
 
 
-	},
+        },
 
-	normalizeValue: function(value, lowerBound, upperBound) {
+        normalizeValue: function(value, lowerBound, upperBound) {
 
-		return parseFloat(value - lowerBound) / parseFloat(upperBound - lowerBound);
+            return parseFloat(value - lowerBound) / parseFloat(upperBound - lowerBound);
 
-	},
+        },
 
-	swapValues: function(a, b) {
+        swapValues: function(a, b) {
 
-		if(typeof a == 'object') {
+            if(typeof a == 'object') {
 
-			b = a[1];
-			a = a[0];
+                b = a[1];
+                a = a[0];
 
-		}
+            }
 
-		return [b, a];
+            return [b, a];
 
-    }
+        }
 
-};
+    };
 
-if(module) {
+    return Misc;
 
-	module.exports = Misc;
-
-}
+});
