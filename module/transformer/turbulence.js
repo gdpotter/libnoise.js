@@ -1,60 +1,22 @@
-define(['../generator/perlin'], function(Perlin) {
-    var Turbulence = function(sourceModule, frequency, power, roughness, seed) {
+define(function() {
 
-        this.xDistortModule = new Perlin();
-        this.yDistortModule = new Perlin();
-        this.zDistortModule = new Perlin();
-        this.sourceModule   = sourceModule  || null;
-        this.frequency      = frequency     || Perlin.DEFAULT_PERLIN_FREQUENCY;
-        this.power          = power         || Turbulence.DEFAULT_TURBULENCE_POWER;
-        this.roughness      = roughness     || Turbulence.DEFAULT_TURBULENCE_ROUGHNESS;
-        this.seed           = seed          || Perlin.DEFAULT_PERLIN_SEED;
+    var noDistort = {getValue: function(x, y, z) {
+        return 0;
+    }};
+
+    var Turbulence = function(options) {
+
+        this.xDistortModule = options.xDistortModule || noDistort;
+        this.yDistortModule = options.yDistortModule || noDistort;
+        this.zDistortModule = options.zDistortModule || noDistort;
+        this.sourceModule   = options.sourceModule   || null;
+        this.power          = options.power          || Turbulence.DEFAULT_TURBULENCE_POWER;
 
     };
 
     Turbulence.DEFAULT_TURBULENCE_POWER     = 1.0;
-    Turbulence.DEFAULT_TURBULENCE_ROUGHNESS = 3;
 
     Turbulence.prototype = {
-
-        get frequency() {
-
-            return this.xDistortModule.frequency;
-        },
-
-        set frequency(v) {
-
-            this.xDistortModule.frequency   = v;
-            this.yDistortModule.frequency   = v;
-            this.zDistortModule.frequency   = v;
-
-        },
-
-        get roughness() {
-
-            return this.xDistortModule.octaves;
-        },
-
-        set roughness(v) {
-
-            this.xDistortModule.octaves   = v;
-            this.yDistortModule.octaves   = v;
-            this.zDistortModule.octaves   = v;
-
-        },
-
-        get seed() {
-
-            return this.xDistortModule.seed;
-        },
-
-        set seed(v) {
-
-            this.xDistortModule.seed   = v;
-            this.yDistortModule.seed   = v + 1;
-            this.zDistortModule.seed   = v + 2;
-
-        },
 
         getValue: function(x, y, z) {
 
@@ -77,20 +39,30 @@ define(['../generator/perlin'], function(Perlin) {
             // integer boundaries.
             var x0 = parseFloat(x + (12414.0 / 65536.0));
             var y0 = parseFloat(y + (65124.0 / 65536.0));
-            var z0 = parseFloat(z + (31337.0 / 65536.0));
             var x1 = parseFloat(x + (26519.0 / 65536.0));
             var y1 = parseFloat(y + (18128.0 / 65536.0));
-            var z1 = parseFloat(z + (60493.0 / 65536.0));
-            var x2 = parseFloat(x + (53820.0 / 65536.0));
-            var y2 = parseFloat(y + (11213.0 / 65536.0));
-            var z2 = parseFloat(z + (44845.0 / 65536.0));
 
-            // Retrieve the output value at the offsetted input value instead of the original input value.
-            return this.sourceModule.getValue(
-                parseFloat(x + (this.xDistortModule.getValue(x0, y0, z0) * this.power)),
-                parseFloat(y + (this.yDistortModule.getValue(x1, y1, z1) * this.power)),
-                parseFloat(z + (this.zDistortModule.getValue(x2, y2, z2) * this.power))
-            );
+            if (z || z === 0) {
+                var z0 = parseFloat(z + (31337.0 / 65536.0));
+                var z1 = parseFloat(z + (60493.0 / 65536.0));
+                var x2 = parseFloat(x + (53820.0 / 65536.0));
+                var y2 = parseFloat(y + (11213.0 / 65536.0));
+                var z2 = parseFloat(z + (44845.0 / 65536.0));
+
+                // Retrieve the output value at the offsetted input value instead of the original input value.
+                return this.sourceModule.getValue(
+                    parseFloat(x + (this.xDistortModule.getValue(x0, y0, z0) * this.power)),
+                    parseFloat(y + (this.yDistortModule.getValue(x1, y1, z1) * this.power)),
+                    parseFloat(z + (this.zDistortModule.getValue(x2, y2, z2) * this.power))
+                );
+            } else {
+                return this.sourceModule.getValue(
+                    parseFloat(x + (this.xDistortModule.getValue(x0, y0) * this.power)),
+                    parseFloat(y + (this.yDistortModule.getValue(x1, y1) * this.power))
+                );
+            }
+
+
 
         }
 
