@@ -1,14 +1,18 @@
-define(['../../noisegen', '../../mathfuncs', '../../misc'], function(NoiseGen, MathFuncs, Misc) {
+define(['./simplex', '../../mathfuncs', '../../misc'], function(Simplex, MathFuncs, Misc) {
 
-    var RidgedMulti = function(frequency, lacunarity, octaves, seed, quality, offset, gain) {
+    var RidgedMulti = function(noiseSource, frequency, lacunarity, octaves, seed, offset, gain) {
 
-        this.frequency  = frequency     || RidgedMulti.DEFAULT_RIDGED_FREQUENCY;
-        this.lacunarity = lacunarity    || RidgedMulti.DEFAULT_RIDGED_LACUNARITY;
-        this.octaves    = octaves       || RidgedMulti.DEFAULT_RIDGED_OCTAVE_COUNT;
-        this.seed       = seed          || RidgedMulti.DEFAULT_RIDGED_SEED;
-        this.quality    = quality       || NoiseGen.QUALITY_STD;
-        this.offset     = offset        || RidgedMulti.DEFAULT_RIDGED_OFFSET;
-        this.gain       = gain          || RidgedMulti.DEFAULT_RIDGED_GAIN;
+        this.frequency   = frequency     || RidgedMulti.DEFAULT_RIDGED_FREQUENCY;
+        this.lacunarity  = lacunarity    || RidgedMulti.DEFAULT_RIDGED_LACUNARITY;
+        this.octaves     = octaves       || RidgedMulti.DEFAULT_RIDGED_OCTAVE_COUNT;
+        this.seed        = seed          || RidgedMulti.DEFAULT_RIDGED_SEED;
+        this.offset      = offset        || RidgedMulti.DEFAULT_RIDGED_OFFSET;
+        this.gain        = gain          || RidgedMulti.DEFAULT_RIDGED_GAIN;
+
+        this.noiseSource = noiseSource   || [];
+        for (var octave = this.noiseSource.length; octave < this.octaves; octave++) {
+            this.noiseSource.push(new Simplex(this.seed + octave));
+        }
 
     };
 
@@ -49,7 +53,7 @@ define(['../../noisegen', '../../mathfuncs', '../../misc'], function(NoiseGen, M
 
         getValue: function(x, y, z) {
 
-            var nx, ny, nz, seed;
+            var nx, ny, nz;
 
             var value   = 0.0;
             var signal  = 0.0;
@@ -68,8 +72,7 @@ define(['../../noisegen', '../../mathfuncs', '../../misc'], function(NoiseGen, M
                 nz      = MathFuncs.makeInt32Range(z);
 
                 // Get the coherent-noise value.
-                seed    = (this.seed + octave) & 0x7fffffff;
-                signal  = NoiseGen.gradientCoherentNoise3D(nx, ny, nz, seed, this.quality);
+                signal  = this.noiseSource[octave].getValue(nx, ny, nz);
 
                 // Make the ridges.
                 signal  = Math.abs(signal);
